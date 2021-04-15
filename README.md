@@ -15,5 +15,7 @@ This is a SQL Diagram Builder built using React and Next.js, bootstrapped with `
 
 Building of app is in progress.
 
+Currently working on the diagram builder.
+
 [![forthebadge](https://forthebadge.com/images/badges/gluten-free.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg)](https://forthebadge.com)
