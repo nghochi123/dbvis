@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useDrop } from "react-dnd";
 import TableBox from "./TableBox";
-import update from "immutability-helper";
 
 /*----------------------------Test Data Here------------------------------------- */
 import tables from '../../misc/data';
@@ -39,7 +38,7 @@ const TableContainer = () => {
   return (
     <div ref={drop} style={styles}>
       {boxes.map((item) => {
-        const { left, top, name, fields, color } = item;
+        const { left, top, name, fields, color, connectedTo } = item;
         return (
           <TableBox
             key={name}
@@ -48,6 +47,7 @@ const TableContainer = () => {
             top={top}
             fields={fields}
             color={color}
+            connectedTo={connectedTo}
           />
         );
       })}
