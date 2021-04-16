@@ -12,11 +12,12 @@ const Test = () => {
             </Head>
             <MainLayout>
                 <PanZoom
-                    style={{height: '80vh', width: '90vw'}}
-                    boundaryRatioVertical={0.8} 
-                    boundaryRatioHorizontal={0.8} 
+                    style={{height: '90vh', width: '99vw'}}
+                    boundaryRatioVertical={0}
+                    boundaryRatioHorizontal={0} 
                     enableBoundingBox
                     maxZoom={3.3}
+                    minZoom={0.5}
                 >
                     <div>
                         <p>Text here</p>

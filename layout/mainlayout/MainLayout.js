@@ -6,28 +6,18 @@ import {
   Toolbar,
   List,
   Divider,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   IconButton
 } from '@material-ui/core';
 import {
-  MoveToInbox,
-  Mail,
   ChevronLeft,
   Menu
 } from '@material-ui/icons'
-// import Drawer from '@material-ui/core/Drawer';
-// import CssBaseline from '@material-ui/core/CssBaseline';
-// import Toolbar from '@material-ui/core/Toolbar';
-// import List from '@material-ui/core/List';
-// import Divider from '@material-ui/core/Divider';
-// import ListItem from '@material-ui/core/ListItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-// import ListItemText from '@material-ui/core/ListItemText';
-// import IconButton from '@material-ui/core/IconButton';
 
+import SidebarExpandable from '../../components/for_main/SidebarExpandable';
 import MainHeader from './MainHeader';
+
+/* ------------------------------TEST DATA HERE---------------------------------------- */
+import table from '../../misc/data';
 
 const drawerWidth = 400;
 
@@ -60,6 +50,19 @@ const useStyles = makeStyles((theme) => ({
 const MainLayout = (props) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  /* ------------------------------TEST DATA HERE---------------------------------------- */
+  const [tables, setTables] = useState(table);
+  const tableAdderHandler = (table) => {
+    setTables([...tables, table]);
+  }
+  const fieldAdderHandler = (name, field) => {
+    let tableToChange = tables.filter(table => table.name===name)[0];
+    const tableArray = tables.filter(table=>table.name!==name);
+    console.log(name, field, tableToChange, tableArray);
+    tableToChange.fields.push(field); //field is an object with field, type, key
+    setTables([...tableArray, tableToChange]);
+  }
+  /* ------------------------------END OF TEST DATA---------------------------------------- */
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -88,26 +91,19 @@ const MainLayout = (props) => {
       >
         <Toolbar />
         <div className={classes.drawerContainer}>
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeft />
-          </IconButton>
-        </div>
+          <div className={classes.drawerHeader}>
+            <IconButton onClick={handleDrawerClose}>
+              <ChevronLeft />
+            </IconButton>
+          </div>
           <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <MoveToInbox /> : <Mail />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <MoveToInbox /> : <Mail />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
+            {tables.map(({name, fields, color}) => (
+              <>
+              <SidebarExpandable color={color} fields={fields} fieldAdder={fieldAdderHandler}>
+                {name}
+              </SidebarExpandable>
+              <Divider />
+              </>
             ))}
           </List>
         </div>
