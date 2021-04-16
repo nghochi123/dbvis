@@ -44,6 +44,9 @@ const SidebarExpandable = (props) =>{
             type: dataField.current.value,
             key: keyField.current.value
         });
+        fieldField.current.value = "";
+        dataField.current.value = "";
+        keyField.current.value = "";
     }
     const handleOpen = () => {
         setOpen(!open);
@@ -99,7 +102,7 @@ const SidebarExpandable = (props) =>{
                         <TextField
                             inputRef={keyField} 
                             className={classes.textItem}
-                            placeholder="Foreign Key"
+                            placeholder="Key"
                             required
                         />
                     </div>

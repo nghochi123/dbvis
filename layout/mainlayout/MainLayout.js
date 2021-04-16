@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Drawer,
@@ -6,7 +6,9 @@ import {
   Toolbar,
   List,
   Divider,
-  IconButton
+  Button,
+  IconButton,
+  TextField
 } from '@material-ui/core';
 import {
   ChevronLeft,
@@ -43,8 +45,15 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
+  textField: {
+    display: 'flex',
+    padding: '0 10px 0 10px'
+  },
+  formField: {
+    display: 'flex',
+  }
 }));
 
 const MainLayout = (props) => {
@@ -52,8 +61,16 @@ const MainLayout = (props) => {
   const [open, setOpen] = useState(false);
   /* ------------------------------TEST DATA HERE---------------------------------------- */
   const [tables, setTables] = useState(table);
-  const tableAdderHandler = (table) => {
-    setTables([...tables, table]);
+  const tableAdderHandler = (event) => {
+    event.preventDefault();
+    const newTables = [...tables, {
+      name: tableNameField.current.value,
+      color: Math.random() * 100,
+      fields: [],
+      order: tables.length + 2
+    }];
+    setTables(newTables);
+    tableNameField.current.value = "";
   }
   const fieldAdderHandler = (name, field) => {
     let tableToChange = tables.filter(table => table.name===name)[0];
@@ -65,6 +82,7 @@ const MainLayout = (props) => {
     setTables(finalTable);
   }
   /* ------------------------------END OF TEST DATA---------------------------------------- */
+  const tableNameField = useRef();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -94,6 +112,16 @@ const MainLayout = (props) => {
         <Toolbar />
         <div className={classes.drawerContainer}>
           <div className={classes.drawerHeader}>
+            <form onSubmit={tableAdderHandler} className={classes.formField}>
+              <TextField 
+                inputRef={tableNameField} 
+                className={classes.textField} 
+                placeholder="Table Name" 
+                required
+              />
+              <Button type="submit" variant="outlined">New Table</Button>
+            </form>
+            
             <IconButton onClick={handleDrawerClose}>
               <ChevronLeft />
             </IconButton>
@@ -101,7 +129,11 @@ const MainLayout = (props) => {
           <List>
             {tables.map(({name, fields, color}) => (
               <div key={name}>
-              <SidebarExpandable color={color} fields={fields} fieldAdder={fieldAdderHandler}>
+              <SidebarExpandable 
+                color={color} 
+                fields={fields} 
+                fieldAdder={fieldAdderHandler}
+              >
                 {name}
               </SidebarExpandable>
               <Divider />
