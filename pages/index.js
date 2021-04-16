@@ -4,7 +4,7 @@ import {PanZoom} from 'react-easy-panzoom';
 
 import MainLayout from '../layout/mainlayout/MainLayout';
 
-const Test = () => {
+const MainPage = () => {
     return (
         <>
             <Head>
@@ -28,4 +28,4 @@ const Test = () => {
     )
 }
 
-export default Test;
+export default MainPage;
