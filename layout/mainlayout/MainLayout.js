@@ -60,7 +60,9 @@ const MainLayout = (props) => {
     const tableArray = tables.filter(table=>table.name!==name);
     console.log(name, field, tableToChange, tableArray);
     tableToChange.fields.push(field); //field is an object with field, type, key
-    setTables([...tableArray, tableToChange]);
+    const finalTable = [...tableArray, tableToChange].sort((a, b)=> (a.order - b.order));
+    console.log(finalTable);
+    setTables(finalTable);
   }
   /* ------------------------------END OF TEST DATA---------------------------------------- */
   const handleDrawerOpen = () => {
@@ -98,12 +100,12 @@ const MainLayout = (props) => {
           </div>
           <List>
             {tables.map(({name, fields, color}) => (
-              <>
+              <div key={name}>
               <SidebarExpandable color={color} fields={fields} fieldAdder={fieldAdderHandler}>
                 {name}
               </SidebarExpandable>
               <Divider />
-              </>
+              </div>
             ))}
           </List>
         </div>

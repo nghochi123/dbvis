@@ -88,16 +88,19 @@ const SidebarExpandable = (props) =>{
                             inputRef={fieldField} 
                             className={classes.textItem}
                             placeholder="Field"
+                            required
                         />
                         <TextField
                             inputRef={dataField} 
                             className={classes.textItem}
                             placeholder="Data Type"
+                            required
                         />
                         <TextField
                             inputRef={keyField} 
                             className={classes.textItem}
                             placeholder="Foreign Key"
+                            required
                         />
                     </div>
                     <div className={classes.textField}>

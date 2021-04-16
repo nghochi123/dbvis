@@ -5,7 +5,8 @@ const tables = [
       fields: [
         {field: 'cat1', type: 'varchar', key: 'Foreign Key'},
         {field: 'cat2', type: 'varchar', key: '-'}
-      ]
+      ],
+      order: 1
     },
     {
       name: 'dogs',
@@ -13,7 +14,8 @@ const tables = [
       fields: [
         {field: 'dog1', type: 'int', key: '-'},
         {field: 'dog2', type: 'int', key: '-'}
-      ]
+      ],
+      order: 2
     },
     {
       name: 'poopy',
@@ -21,7 +23,8 @@ const tables = [
       fields: [
         {field: 'shit', type: 'int', key: '-'},
         {field: 'shit2', type: 'int', key: '-'}
-      ]
+      ],
+      order: 3
     },
     {
       name: 'piss',
@@ -29,7 +32,8 @@ const tables = [
       fields: [
         {field: 'psiscrap', type: 'int', key: 'Primary Key'},
         {field: 'test2', type: 'int', key: '-'}
-      ]
+      ],
+      order: 4
     }
 ];
 
