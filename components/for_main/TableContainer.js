@@ -1,56 +1,51 @@
-import React, { useCallback, useState } from "react";
-import { useDrop } from "react-dnd";
+import React, { useState, useContext } from "react";
+import dynamic from "next/dynamic";
 import TableBox from "./TableBox";
+import Draggable from "react-draggable";
+import {RerenderStateContext} from '../../context/TableContainerForceRerender';
 
-/*----------------------------Test Data Here------------------------------------- */
-import tables from '../../misc/data';
+import appDatabase from "../../misc/data";
+
+const tables = appDatabase.groups[0].tables;
+const Xarrow = dynamic(() => import("react-xarrows"), { ssr: false });
 
 const styles = {
-  width: "99vw",
-  height: "90vh",
-  position: "absolute",
-};
+    width: "99vw",
+    height: "90vh",
+  };
+
 const TableContainer = () => {
-  const [boxes, setBoxes] = useState(tables);
-  const moveBox = useCallback(
-    (name, left, top) => {
-        let replaceBoxPos = boxes.filter(box=>box.name === name)[0];
-        let boxPosWithoutReplaceBoxPos = boxes.filter(box=>box.name !== name);
-        replaceBoxPos.left = left;
-        replaceBoxPos.top = top;
-      setBoxes([...boxPosWithoutReplaceBoxPos, replaceBoxPos]);
-    },
-    [boxes, setBoxes]
-  );
-  const [_, drop] = useDrop(
-    () => ({
-      accept: "box",
-      drop(item, monitor) {
-        const delta = monitor.getDifferenceFromInitialOffset();
-        const left = Math.round(item.left + delta.x);
-        const top = Math.round(item.top + delta.y);
-        moveBox(item.name, left, top);
-        return undefined;
-      },
-    }),
-    [moveBox]
-  );
+  const line = {
+    start: "cats-cat1",
+    end: "piss-psiscrap",
+    color: "hsl(50, 50%, 50%)",
+    path: "grid",
+    strokeWidth: 1,
+    headSize: 5,
+    dashness: { animation: 0 },
+    startAnchor: ["left", "right"],
+    endAnchor: ["left", "right"],
+  };
+  const rerender = useContext(RerenderStateContext).toggle;
+  const [, setRender] = useState({});
+  const forceRerender = () => setRender({});
+  console.log(tables)
   return (
-    <div ref={drop} style={styles}>
-      {boxes.map((item) => {
-        const { left, top, name, fields, color, connectedTo } = item;
-        return (
-          <TableBox
-            key={name}
-            name={name}
-            left={left}
-            top={top}
-            fields={fields}
-            color={color}
-            connectedTo={connectedTo}
-          />
-        );
-      })}
+    <div style={styles} lmao={rerender}>
+      {tables.map(({ name, left, top, fields, color }, i) => (
+        <Draggable bounds="parent" onStop={forceRerender} onDrag={forceRerender} key={i}>
+          <div id={name} style={{ position: "absolute", maxWidth: '100vw', maxHeight: '100vh', left, top }}>
+            <TableBox
+              name={name}
+              left={left}
+              top={top}
+              fields={fields}
+              color={color}
+            />
+          </div>
+        </Draggable>
+      ))}
+      <Xarrow {...line} />
     </div>
   );
 };

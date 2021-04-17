@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Drawer,
@@ -14,12 +14,14 @@ import {
   ChevronLeft,
   Menu
 } from '@material-ui/icons'
+import {RerenderDispatchContext} from '../../context/TableContainerForceRerender';
 
 import SidebarExpandable from '../../components/for_main/SidebarExpandable';
 import MainHeader from './MainHeader';
 
 /* ------------------------------TEST DATA HERE---------------------------------------- */
-import table from '../../misc/data';
+import appDatabase from '../../misc/data';
+const table = appDatabase.groups[0].tables;
 
 const drawerWidth = 400;
 
@@ -57,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const MainLayout = (props) => {
+  const rerender = useContext(RerenderDispatchContext);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   /* ------------------------------TEST DATA HERE---------------------------------------- */
@@ -67,19 +70,24 @@ const MainLayout = (props) => {
       name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
-      order: tables.length + 2
+      order: tables.length + 2,
+      top: 200,
+      left: 200
     }];
     setTables(newTables);
     tableNameField.current.value = "";
+    console.log(tables)
+    rerender({type:'FORCE_RERENDER'});
   }
   const fieldAdderHandler = (name, field) => {
     let tableToChange = tables.filter(table => table.name===name)[0];
     const tableArray = tables.filter(table=>table.name!==name);
-    console.log(name, field, tableToChange, tableArray);
     tableToChange.fields.push(field); //field is an object with field, type, key
     const finalTable = [...tableArray, tableToChange].sort((a, b)=> (a.order - b.order));
     console.log(finalTable);
     setTables(finalTable);
+    //Force rerender in table container
+    rerender({type:'FORCE_RERENDER'});
   }
   /* ------------------------------END OF TEST DATA---------------------------------------- */
   const tableNameField = useRef();

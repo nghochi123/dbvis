@@ -8,7 +8,6 @@ const initialState = {
     userToken: 'chicken nuggets',
     search: '',
     grid: false,
-    zen: false
 }
 
 const reducer = (state, action) => {
