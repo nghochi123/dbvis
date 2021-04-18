@@ -14,7 +14,7 @@ const styles = {
     height: "90vh",
   };
 
-const TableContainer = () => {
+const TableContainer = ({tables_data, fields}) => {
   const line = {
     start: "cats-cat1",
     end: "piss-psiscrap",
@@ -29,7 +29,6 @@ const TableContainer = () => {
   const rerender = useContext(RerenderStateContext).toggle;
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
-  console.log(tables)
   return (
     <div style={styles} lmao={rerender}>
       {tables.map(({ name, left, top, fields, color }, i) => (
@@ -51,3 +50,5 @@ const TableContainer = () => {
 };
 
 export default TableContainer;
+
+
