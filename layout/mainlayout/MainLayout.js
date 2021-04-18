@@ -76,20 +76,30 @@ const MainLayout = (props) => {
   const [open, setOpen] = useState(false);
   /* ------------------------------TEST DATA HERE---------------------------------------- */
   const [tables, setTables] = useState(table);
+  let max = 0;
+  tables.forEach(table=>{
+    if(table.id > max){
+      max = table.id
+    }
+  });
+
   const tableAdderHandler = async (event) => {
     event.preventDefault();
     const tbl = {
+      id: max + 1,
       name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
-      order: tables.length + 2,
+      order: max + 1,
       top: 500,
-      left: 500
+      left: 500,
+      db_id: 1 //To change once we get the db passed into the props.
     };
     const newTables = [...tables, tbl];
     setTables(newTables);
     tableNameField.current.value = "";
     await axios.post('/api/addtable', {
+      id: tbl.id,
       tbl_name: tbl.name,
       color: tbl.color,
       _top: tbl.top,
@@ -98,10 +108,10 @@ const MainLayout = (props) => {
     })
     .then(res=>console.log(res))
     .catch(e=>console.log(e));
+    rerender({type: 'FORCE_RERENDER'});
     props.refresh();
   }
   const fieldAdderHandler = async (name, field, db_id, table_id, fieldname) => {
-    console.log(db_id, props.dbname, name);
     const concat_dbname = props.dbname.find(item=>item.db_id === db_id).concat_dbname;
     const newname = `${concat_dbname}-${name}-${fieldname}`;
     let tableToChange = tables.filter(table => table.name===name)[0];
@@ -113,6 +123,17 @@ const MainLayout = (props) => {
     .then(res=>console.log(res))
     .catch(e=>console.log(e));
     //Force rerender in table container
+    const connection = field.field_key.replace("F(", "").replace(")", "").split('-');
+    if(field.field_key.startsWith("F")){
+      await axios.post('/api/addconnection',
+      {
+        arrow_from: `${concat_dbname}-${name}-${fieldname}`,
+        arrow_to: `${concat_dbname}-${connection[0]}-${connection[1]}`
+      })
+      .then(res=>console.log(res))
+      .catch(e=>console.log(e));
+    }
+    rerender({type: 'FORCE_RERENDER'});
     props.refresh();
   }
   /* ------------------------------END OF TEST DATA---------------------------------------- */
