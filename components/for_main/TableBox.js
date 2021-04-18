@@ -19,8 +19,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TableBox = ({ name, fields, color, connectedTo }) => {
+const TableBox = ({ id, name, fields, color, connectedTo }) => {
   const classes = useStyles();
+  const tableFields = fields.filter(field=>field.table_id === id);
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -36,10 +37,10 @@ const TableBox = ({ name, fields, color, connectedTo }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {fields.map((field) => (
-            <TableRow id={`${name}-${field.field}`} key={field.field}>
+          {tableFields.map((field) => (
+            <TableRow id={field.field_name} key={field.field_name}>
               <TableCell>{field.field}</TableCell>
-              <TableCell align="right">{field.type}</TableCell>
+              <TableCell align="right">{field.field_type}</TableCell>
             </TableRow>
           ))}
         </TableBody>

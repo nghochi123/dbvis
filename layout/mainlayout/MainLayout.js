@@ -14,14 +14,14 @@ import {
   ChevronLeft,
   Menu
 } from '@material-ui/icons'
+import axios from 'axios';
 import {RerenderDispatchContext} from '../../context/TableContainerForceRerender';
+
 
 import SidebarExpandable from '../../components/for_main/SidebarExpandable';
 import MainHeader from './MainHeader';
 
 /* ------------------------------TEST DATA HERE---------------------------------------- */
-import appDatabase from '../../misc/data';
-const table = appDatabase.groups[0].tables;
 
 const drawerWidth = 400;
 
@@ -61,33 +61,59 @@ const useStyles = makeStyles((theme) => ({
 const MainLayout = (props) => {
   const rerender = useContext(RerenderDispatchContext);
   const classes = useStyles();
+  const table = props.tables.map(table=>{
+    return {
+      id: table.id,
+      name: table.tbl_name,
+      color: table.color,
+      fields: props.fields.filter(field=>field.table_id === table.id),
+      order: table.id,
+      top: table._top,
+      left: table._left,
+      db_id: table.db_id
+    }
+  })
   const [open, setOpen] = useState(false);
   /* ------------------------------TEST DATA HERE---------------------------------------- */
   const [tables, setTables] = useState(table);
-  const tableAdderHandler = (event) => {
+  const tableAdderHandler = async (event) => {
     event.preventDefault();
-    const newTables = [...tables, {
+    const tbl = {
       name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
       order: tables.length + 2,
-      top: 200,
-      left: 200
-    }];
+      top: 500,
+      left: 500
+    };
+    const newTables = [...tables, tbl];
     setTables(newTables);
     tableNameField.current.value = "";
-    console.log(tables)
-    rerender({type:'FORCE_RERENDER'});
+    await axios.post('/api/addtable', {
+      tbl_name: tbl.name,
+      color: tbl.color,
+      _top: tbl.top,
+      _left: tbl.left,
+      db_id: 1
+    })
+    .then(res=>console.log(res))
+    .catch(e=>console.log(e));
+    props.refresh();
   }
-  const fieldAdderHandler = (name, field) => {
+  const fieldAdderHandler = async (name, field, db_id, table_id, fieldname) => {
+    console.log(db_id, props.dbname, name);
+    const concat_dbname = props.dbname.find(item=>item.db_id === db_id).concat_dbname;
+    const newname = `${concat_dbname}-${name}-${fieldname}`;
     let tableToChange = tables.filter(table => table.name===name)[0];
     const tableArray = tables.filter(table=>table.name!==name);
     tableToChange.fields.push(field); //field is an object with field, type, key
     const finalTable = [...tableArray, tableToChange].sort((a, b)=> (a.order - b.order));
-    console.log(finalTable);
     setTables(finalTable);
+    await axios.post('/api/addfield', {...field, field_name: newname, table_id})
+    .then(res=>console.log(res))
+    .catch(e=>console.log(e));
     //Force rerender in table container
-    rerender({type:'FORCE_RERENDER'});
+    props.refresh();
   }
   /* ------------------------------END OF TEST DATA---------------------------------------- */
   const tableNameField = useRef();
@@ -135,12 +161,14 @@ const MainLayout = (props) => {
             </IconButton>
           </div>
           <List>
-            {tables.map(({name, fields, color}) => (
+            {tables.map(({name, fields, color, db_id, id}) => (
               <div key={name}>
               <SidebarExpandable 
                 color={color} 
                 fields={fields} 
                 fieldAdder={fieldAdderHandler}
+                db_id={db_id}
+                table_id={id}
               >
                 {name}
               </SidebarExpandable>

@@ -41,9 +41,9 @@ const SidebarExpandable = (props) =>{
         event.preventDefault();
         props.fieldAdder(props.children, {
             field: fieldField.current.value,
-            type: dataField.current.value,
-            key: keyField.current.value
-        });
+            field_type: dataField.current.value,
+            field_key: keyField.current.value
+        }, props.db_id, props.table_id, fieldField.current.value);
         fieldField.current.value = "";
         dataField.current.value = "";
         keyField.current.value = "";
@@ -69,16 +69,16 @@ const SidebarExpandable = (props) =>{
                             <TableRow>
                                 <TableCell>Field</TableCell>
                                 <TableCell align="right">Data Type</TableCell>
-                                <TableCell align="right">Key</TableCell>
+                                <TableCell align="right">Connect</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {
                                 props.fields.map((row)=>(
-                                    <TableRow key={row.field}>
+                                    <TableRow key={row.field_name}>
                                         <TableCell>{row.field}</TableCell>
-                                        <TableCell align="right">{row.type}</TableCell>
-                                        <TableCell align="right">{row.key}</TableCell>
+                                        <TableCell align="right">{row.field_type}</TableCell>
+                                        <TableCell align="right">{row.field_key}</TableCell>
                                     </TableRow>
                                 ))
                             }
@@ -102,7 +102,7 @@ const SidebarExpandable = (props) =>{
                         <TextField
                             inputRef={keyField} 
                             className={classes.textItem}
-                            placeholder="Key"
+                            placeholder="Connect"
                             required
                         />
                     </div>
