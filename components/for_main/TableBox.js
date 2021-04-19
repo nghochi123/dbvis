@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TableBox = ({ id, name, fields, color, connectedTo }) => {
+const TableBox = ({ id, name, fields, color }) => {
   const classes = useStyles();
   const tableFields = fields.filter(field=>field.table_id === id);
   return (

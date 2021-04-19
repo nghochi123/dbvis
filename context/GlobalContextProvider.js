@@ -4,28 +4,17 @@ export const GlobalStateContext = createContext();
 export const GlobalDispatchContext = createContext();
 
 const initialState = {
-    darkMode: false,
-    userToken: 'chicken nuggets',
-    search: '',
-    grid: false,
+    dialogOpen: false,
+    dialogText: ['',''],
 }
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'TOGGLE_THEME':
+        case 'TOGGLE_DIALOG':
             return {
                 ...state,
-                darkMode: !state.darkMode
-            }
-        case 'SET_USER_TOKEN':
-            return {
-                ...state,
-                userToken: action.payload
-            }
-        case 'SET_SEARCH':
-            return {
-                ...state,
-                search: action.payload
+                dialogOpen: !state.dialogOpen,
+                dialogText: action.payload
             }
         default:
             throw new Error('Illegal Action Type');

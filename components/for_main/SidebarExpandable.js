@@ -17,11 +17,12 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import { RerenderStateContext } from "../../context/TableContainerForceRerender";
-
 import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
+import { GlobalDispatchContext } from "../../context/GlobalContextProvider";
 
 const SidebarExpandable = (props) => {
   const rerender = useContext(RerenderStateContext).toggle;
+  const dispatch = useContext(GlobalDispatchContext);
   const useStyles = makeStyles((theme) => ({
     root: {
       minWidth: 0,
@@ -45,23 +46,38 @@ const SidebarExpandable = (props) => {
   ];
   const handleAddField = async (event) => {
     event.preventDefault();
-    props.fieldAdder(
-      props.children,
-      {
-        field: fieldField.current.value,
-        field_type: dataField.current.value,
-        field_key:
-          keyField.current.value === "F"
-            ? `${keyField.current.value}(${connectionField.current.value})`
-            : keyField.current.value,
-      },
-      props.db_id,
-      props.table_id,
-      fieldField.current.value
-    );
-    fieldField.current.value = "";
-    dataField.current.value = "";
-    connectionField.current.value = "-";
+    const checkString = /[A-z1-9]+\-[A-z1-9]+/;
+    if (
+      keyField.current.value === "F" &&
+      !connectionField.current.value.match(checkString)
+    ) {
+      dispatch({
+        type: "TOGGLE_DIALOG",
+        payload: [
+          "Error - Bad Input",
+          "Please check whether the format of your connection field is correct. The correct format would be [table name]-[field name], where the table name and field name are of the field you wish to connect this field to.",
+        ],
+      });
+    }
+    else{
+      props.fieldAdder(
+        props.children,
+        {
+          field: fieldField.current.value,
+          field_type: dataField.current.value,
+          field_key:
+            keyField.current.value === "F"
+              ? `${keyField.current.value}(${connectionField.current.value})`
+              : keyField.current.value,
+        },
+        props.db_id,
+        props.table_id,
+        fieldField.current.value
+      );
+      fieldField.current.value = "";
+      dataField.current.value = "";
+      connectionField.current.value = "-";
+    }
   };
   const handleOpen = () => {
     setOpen(!open);

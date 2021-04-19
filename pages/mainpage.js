@@ -2,12 +2,13 @@ import React from "react";
 import Head from "next/head";
 import {useRouter} from 'next/router';
 import TableContainer from "../components/for_main/TableContainer";
+import ErrorDialog from '../components/for_main/ErrorDialog';
 import TableContainerForceRerender from "../context/TableContainerForceRerender";
 
 import diagrams from '../misc/knex'
 import MainLayout from "../layout/mainlayout/MainLayout";
 
-const Test = ({tables, fields, arrows, names}) => {
+const MainPage = ({tables, fields, arrows, names}) => {
   console.log(names, tables);
   const router = useRouter();
   const refresh = () => {
@@ -22,12 +23,13 @@ const Test = ({tables, fields, arrows, names}) => {
         <MainLayout tables={tables} fields={fields} dbname={names} refresh={refresh}>
           <TableContainer tables={tables} fields={fields} arrows={arrows}/>
         </MainLayout>
+        <ErrorDialog/>
       </TableContainerForceRerender>
     </>
   );
 };
 
-export default Test;
+export default MainPage;
 
 export const getServerSideProps = async ({ req, query }) => {
   const name_data = await diagrams('tbl')

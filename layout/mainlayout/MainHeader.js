@@ -108,6 +108,7 @@ const MainHeader = (props) => {
                     >
                         <MenuItem onClick={handleClose}>Profile</MenuItem>
                         <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem onClick={handleClose}>Log Out</MenuItem>
                         <hr/>
                         <MenuItem onClick={handleClose}>Advanced Settings</MenuItem>
                     </Menu>
