@@ -5,7 +5,7 @@ const addConnection = async (req, res) => {
     return res.status(400).send({error: 'Bad request'});
   }
   await diagrams('field_connection').insert(req.body);
-  const item = await diagrams('tbl').select();
+  const item = await diagrams('field_connection').select();
   res.status(200).send(item);
 }
 

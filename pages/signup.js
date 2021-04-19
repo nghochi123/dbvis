@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Button,
   CssBaseline,
@@ -12,6 +13,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import validator from "validator";
 import ErrorDialog from "../components/for_main/ErrorDialog";
 import { GlobalDispatchContext } from "../context/GlobalContextProvider";
+import diagrams from "../misc/knex";
+import bcrypt from "bcryptjs";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   innerContainer: {
@@ -30,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp() {
+const SignUp = ({ users }) => {
+  const router = useRouter();
   const dispatch = useContext(GlobalDispatchContext);
   const [error, setError] = useState(false);
   const [userField, emailField, passwordField, confirmField] = [
@@ -40,7 +45,12 @@ export default function SignUp() {
     useRef(),
   ];
   const classes = useStyles();
-  const submitHandler = (e) => {
+  const wait = async (ms) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  };
+  const submitHandler = async (e) => {
     e.preventDefault();
     const [username, email, password] = [
       userField.current.value,
@@ -73,8 +83,29 @@ export default function SignUp() {
         type: "TOGGLE_DIALOG",
         payload: ["Passwords do not match", "Please confirm your passwords"],
       });
+    } else if (users.find((user) => user.username === username)) {
+      dispatch({
+        type: "TOGGLE_DIALOG",
+        payload: ["Username is in use", "Please choose another username"],
+      });
+    } else if (users.find((user) => user.email === email)) {
+      dispatch({
+        type: "TOGGLE_DIALOG",
+        payload: ["Email is in use", "Please choose another email"],
+      });
     } else {
-      console.log("good to go!");
+      const hashedPW = await bcrypt.hash(password, 8);
+      await axios
+        .post("/api/adduser", { username, email, password: hashedPW })
+        .then((res) => console.log(res))
+        .catch((e) => console.log(e));
+      dispatch({
+        type: "TOGGLE_DIALOG",
+        payload: ["Success", "Your account has been created. Redirecting..."],
+      });
+      await wait(1000);
+      router.push("/login");
+      dispatch({type: 'TOGGLE_DIALOG', payload: ["Success", "Your account has been created. Redirecting..."]});
     }
   };
   const confirmPassword = () => {
@@ -170,4 +201,14 @@ export default function SignUp() {
       <ErrorDialog />
     </Container>
   );
-}
+};
+export default SignUp;
+
+export const getServerSideProps = async ({ req, query }) => {
+  const users = await diagrams("users").select();
+  return {
+    props: {
+      users: JSON.parse(JSON.stringify(users)),
+    },
+  };
+};

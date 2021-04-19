@@ -81,26 +81,24 @@ const MainLayout = (props) => {
   const tableAdderHandler = async (event) => {
     event.preventDefault();
     const tbl = {
-      id: max + 1,
       name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
       order: max + 1,
       top: 500,
       left: 500,
-      db_id: 1, //To change once we get the db passed into the props.
+      db_id: props.dbid, //To change once we get the db passed into the props.
     };
     const newTables = [...tables, tbl];
     setTables(newTables);
     tableNameField.current.value = "";
     await axios
       .post("/api/addtable", {
-        id: tbl.id,
         tbl_name: tbl.name,
         color: tbl.color,
         _top: tbl.top,
         _left: tbl.left,
-        db_id: 1,
+        db_id: props.dbid,
       })
       .then((res) => console.log(res))
       .catch((e) => console.log(e));
