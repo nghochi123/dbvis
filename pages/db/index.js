@@ -1,23 +1,24 @@
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/styles";
-import { List, ListItem, ListItemText } from "@material-ui/core";
+import { List, ListItem, ListItemText, Fab } from "@material-ui/core";
+import {Add} from '@material-ui/icons';
 
-import diagrams from "../misc/knex";
-import {checkAuthDB} from "../misc/checkAuth";
-import ErrorDialog from "../components/for_main/ErrorDialog";
-import OtherHeader from '../layout/otherlayout/OtherHeader';
+import diagrams from "../../misc/knex";
+import { checkAuthDB } from "../../misc/checkAuth";
+import ErrorDialog from "../../components/for_main/ErrorDialog";
+import OtherHeader from "../../layout/otherlayout/OtherHeader";
 import {
   GlobalStateContext,
   GlobalDispatchContext,
-} from "../context/GlobalContextProvider";
+} from "../../context/GlobalContextProvider";
 
 const useStyles = makeStyles((theme) => ({
   innerContainer: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: '100%',
+    width: "100%",
   },
   outerContainer: {
     height: "100vh",
@@ -26,30 +27,44 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   list: {
-      width: "40vw",
-      border: '2px solid #dfdfdf'
+    width: "40vw",
+    border: "2px solid #dfdfdf",
   },
   listItem: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   pushUp: {
     marginTop: "1.5em",
   },
+  fab: {
+    position: 'absolute',
+    bottom: '3vw',
+    right: '3vh',
+  }
 }));
 
 const Groups = ({ dbs, confirmAuth }) => {
-console.log(dbs);
+  console.log(dbs);
   const router = useRouter();
   const state = useContext(GlobalStateContext);
   const dispatch = useContext(GlobalDispatchContext);
-  const authed = checkAuthDB(dbs, confirmAuth, state.userid, state.userToken, state.groupid);
+  const authed = checkAuthDB(
+    dbs,
+    confirmAuth,
+    state.userid,
+    state.userToken,
+    state.groupid
+  );
   const classes = useStyles();
-  const redirectHandler = (dbid) => (event) =>{
+  const redirectHandler = (dbid) => (event) => {
     dispatch({
-      type: 'SET_DBID',
+      type: "SET_DBID",
       payload: dbid,
-    })
-    router.push('/mainpage');
+    });
+    router.push("/mainpage");
+  };
+  const fabHandler = (e) =>{
+    router.push("/db/newdb")
   }
   useEffect(() => {
     if (!authed) {
@@ -79,30 +94,41 @@ console.log(dbs);
       <List component="nav" className={classes.list}>
         {dbs.map((db) => (
           <>
-            <ListItem button onClick={redirectHandler(db.id)} className={classes.listItem}>
-              <ListItemText primary={db.db_name}/>
+            <ListItem
+              button
+              onClick={redirectHandler(db.id)}
+              className={classes.listItem}
+            >
+              <ListItemText primary={db.db_name} secondary={db.db_desc}/>
             </ListItem>
           </>
         ))}
       </List>
     );
-    if(dbs.length===0){
-        display = (
-            <p>There are no databases in this group at the moment.</p>
-        )
+    if (dbs.length === 0) {
+      display = <p>There are no databases in this group at the moment.</p>;
     }
   }
   return (
-    <div className={classes.outerContainer}>
-        <OtherHeader/>
+    <div>
+      <div className={classes.outerContainer}>
+        <OtherHeader />
         <div className={classes.innerContainer}>
-        
-        <h1>Databases in this group:</h1>
-        {display}
-
+          <h1>Databases in this group:</h1>
+          {display}
         </div>
-      
-      <ErrorDialog />
+
+        <ErrorDialog />
+      </div>
+      <Fab
+        variant="extended"
+        color="primary"
+        className={classes.fab}
+        onClick={fabHandler}
+      >
+        <Add />
+        New Database
+      </Fab>
     </div>
   );
 };
@@ -111,8 +137,8 @@ export default Groups;
 
 export const getServerSideProps = async ({ req, query }) => {
   const dbs = await diagrams("grp")
-    .join('db', 'db.group_id', 'grp.id')
-    .select('db.id', 'group_name', 'group_id', 'db_name');
+    .join("db", "db.group_id", "grp.id")
+    .select("db.id", "group_name", "group_id", "db_name", "db_desc");
   const confirmAuth = await diagrams("users")
     .join("user_tokens", "user_tokens.user_id", "users.id")
     .select();

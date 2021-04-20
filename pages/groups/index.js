@@ -1,12 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/styles";
-import { List, ListItem, ListItemText } from "@material-ui/core";
+import { List, ListItem, ListItemText, Fab, Typography } from "@material-ui/core";
+import {Add} from '@material-ui/icons';
 
 import diagrams from "../../misc/knex";
-import {checkAuth} from "../../misc/checkAuth";
+import { checkAuth } from "../../misc/checkAuth";
 import ErrorDialog from "../../components/for_main/ErrorDialog";
-import OtherHeader from '../../layout/otherlayout/OtherHeader';
+import OtherHeader from "../../layout/otherlayout/OtherHeader";
 import {
   GlobalStateContext,
   GlobalDispatchContext,
@@ -17,24 +18,29 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: '100%',
+    width: "100%",
   },
   outerContainer: {
-    height: "100vh",
+    height: "90vh",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
   },
   list: {
-      width: "40vw",
-      border: '2px solid #dfdfdf'
+    width: "40vw",
+    border: "2px solid #dfdfdf",
   },
   listItem: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   pushUp: {
     marginTop: "1.5em",
   },
+  fab: {
+    position: 'absolute',
+    bottom: '3vw',
+    right: '3vh',
+  }
 }));
 
 const Groups = ({ groups, confirmAuth }) => {
@@ -43,12 +49,15 @@ const Groups = ({ groups, confirmAuth }) => {
   const dispatch = useContext(GlobalDispatchContext);
   const authed = checkAuth(groups, confirmAuth, state.userid, state.userToken);
   const classes = useStyles();
-  const redirectHandler = (group_id) => (event) =>{
+  const redirectHandler = (group_id) => (event) => {
     dispatch({
-      type: 'SET_GROUPID',
+      type: "SET_GROUPID",
       payload: group_id,
-    })
-    router.push('/db');
+    });
+    router.push("/db");
+  };
+  const fabHandler = (e) =>{
+    router.push("/groups/creategroup")
   }
   useEffect(() => {
     if (!authed) {
@@ -78,25 +87,47 @@ const Groups = ({ groups, confirmAuth }) => {
       <List component="nav" className={classes.list}>
         {groups.map((group) => (
           <>
-            <ListItem button onClick={redirectHandler(group.groupid)} className={classes.listItem}>
-              <ListItemText primary={group.group_name} secondary={`Owned by ${group.username}`}/>
+            <ListItem
+              button
+              onClick={redirectHandler(group.groupid)}
+              className={classes.listItem}
+            >
+              <ListItemText
+                primary={`${group.group_name}`}
+                secondary={
+                  <>
+                    <Typography component="span" variant="body2" color="textPrimary">
+                      Owner: {group.username}
+                    </Typography>
+                    <br/>
+                    {group.group_desc}
+                  </>
+                }
+              />
             </ListItem>
           </>
         ))}
       </List>
     );
   }
+  if (groups.length === 0) {
+    display = <p>There are no groups you have access to at the moment.</p>;
+  }
   return (
+    <div>
+
     <div className={classes.outerContainer}>
-        <OtherHeader/>
-        <div className={classes.innerContainer}>
-        
+      <OtherHeader />
+      <div className={classes.innerContainer}>
         <h1>Groups you are part of:</h1>
         {display}
-
-        </div>
-      
+      </div>
       <ErrorDialog />
+    </div>
+      <Fab variant="extended" color="primary" className={classes.fab} onClick={fabHandler}>
+        <Add/>
+        New Group
+      </Fab>
     </div>
   );
 };
@@ -106,7 +137,7 @@ export default Groups;
 export const getServerSideProps = async ({ req, query }) => {
   const groups = await diagrams("group_user")
     .join("grp", "grp.id", "group_user.groupid")
-    .join('users', 'grp.owner_id', 'users.id')
+    .join("users", "grp.owner_id", "users.id")
     .select();
   const confirmAuth = await diagrams("users")
     .join("user_tokens", "user_tokens.user_id", "users.id")

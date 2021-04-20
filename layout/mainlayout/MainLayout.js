@@ -16,7 +16,7 @@ import { RerenderDispatchContext } from "../../context/TableContainerForceRerend
 
 import SidebarExpandable from "../../components/for_main/SidebarExpandable";
 import MainHeader from "./MainHeader";
-import { GlobalDispatchContext } from "../../context/GlobalContextProvider";
+import { GlobalDispatchContext, GlobalStateContext } from "../../context/GlobalContextProvider";
 
 const drawerWidth = 400;
 
@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
 const MainLayout = (props) => {
   const rerender = useContext(RerenderDispatchContext);
   const dispatch = useContext(GlobalDispatchContext);
+  const state = useContext(GlobalStateContext);
+  const dbinfo = props.breadcrumbinfo.find(db=>state.dbid === db.id);
+  const [username, groupname, dbname] = [dbinfo.username, dbinfo.group_name, dbinfo.db_name];
   const classes = useStyles();
   const table = props.tables.map((table) => {
     return {
@@ -71,29 +74,25 @@ const MainLayout = (props) => {
   });
   const [open, setOpen] = useState(false);
   const [tables, setTables] = useState(table);
-  let max = 0;
-  tables.forEach((table) => {
-    if (table.id > max) {
-      max = table.id;
-    }
-  });
 
   const tableAdderHandler = async (event) => {
     event.preventDefault();
     const tbl = {
+      id: props.maxtableid[0].maxid + 1,
       name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
-      order: max + 1,
+      order: props.maxtableid + 1,
       top: 500,
       left: 500,
-      db_id: props.dbid, //To change once we get the db passed into the props.
+      db_id: props.dbid,
     };
     const newTables = [...tables, tbl];
     setTables(newTables);
     tableNameField.current.value = "";
     await axios
       .post("/api/addtable", {
+        id: props.maxtableid[0].maxid + 1,
         tbl_name: tbl.name,
         color: tbl.color,
         _top: tbl.top,
@@ -117,7 +116,6 @@ const MainLayout = (props) => {
       .split("-");
     const connectionField = `${concat_dbname}-${connection[0]}-${connection[1]}`;
     if (props.fields.find((field) => field.field_name === newname)) {
-      console.log(props.fields, newname);
       dispatch({
         type: "TOGGLE_DIALOG",
         payload: [
@@ -195,7 +193,11 @@ const MainLayout = (props) => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <MainHeader headerClass={classes.appBar} />
+      <MainHeader 
+      headerClass={classes.appBar}
+      username={username}
+      groupname={groupname}
+      dbname={dbname} />
       <div>
         <Toolbar />
         <IconButton onClick={handleDrawerOpen} style={{ zIndex: 69 }}>

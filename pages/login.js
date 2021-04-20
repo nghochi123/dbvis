@@ -40,11 +40,6 @@ const LogIn = ({ users }) => {
   const router = useRouter();
   const dispatch = useContext(GlobalDispatchContext);
   const [userField, passwordField] = [useRef(), useRef()];
-  const wait = async (ms) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  };
   const submitHandler = async (e) => {
     console.log(JWT_SECRET);
     e.preventDefault();
@@ -85,10 +80,7 @@ const LogIn = ({ users }) => {
             })
         })
         .catch((e) => console.log(e));
-      dispatch({ type: "TOGGLE_DIALOG", payload: ["Welcome", "Welcome."] });
-      await wait(1000);
       router.push("/groups");
-      dispatch({ type: "TOGGLE_DIALOG", payload: ["Welcome", "Welcome."] });
     }
   };
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import axios from 'axios';
 import dynamic from "next/dynamic";
 import TableBox from "./TableBox";
@@ -13,6 +13,10 @@ const styles = {
   };
 
 const TableContainer = ({tables, fields, arrows}) => {
+  const refArr = useRef([]);
+  useEffect(() => {
+    refArr.current = refArr.current.slice(0, tables.length);
+ }, [tables]);
   const lines = arrows.map(arrow => {
     return ({
       start: arrow.arrow_from,
@@ -26,13 +30,14 @@ const TableContainer = ({tables, fields, arrows}) => {
       endAnchor: ["left", "right"],
     })
   })
+  // const refArr = tables.map(i=>useRef());
   const rerender = useContext(RerenderStateContext).toggle;
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
-  const refArr = tables.map(i=>useRef());
-  const handleStop = (i, id) => async () => {
+  const handleStop = (i, id) => async (e) => {
+    console.log(refArr);
     await axios
-          .post("/api/updateposition", {id, x: refArr[i].current.state.x, y: refArr[i].current.state.y })
+          .post("/api/updateposition", {id, x: refArr.current[i].state.x, y: refArr.current[i].state.y })
           .then((res) => console.log(res))
           .catch((e) => console.log(e));
     setRender({});
@@ -41,7 +46,7 @@ const TableContainer = ({tables, fields, arrows}) => {
     <div style={styles} lmao={rerender}>
       {tables.map(({id, tbl_name, _left, _top, color }, i) => {
         return (
-        <Draggable bounds="parent" ref={refArr[i]} onStop={handleStop(i, id)} onDrag={forceRerender} key={`${i}-${id}-${tbl_name}`} defaultPosition={{x:_left, y:_top}} >
+        <Draggable bounds="parent" ref={item=>refArr.current[i] = item} onStop={handleStop(i, id)} onDrag={forceRerender} key={`${i}-${id}-${tbl_name}`} defaultPosition={{x:_left, y:_top}} >
           <div id={id} style={{ position: "absolute", maxWidth: '100vw', maxHeight: '100vh'}}>
             <TableBox
               id={id}
