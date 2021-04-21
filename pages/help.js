@@ -1,7 +1,14 @@
 import React from "react";
 import LandingLayout from "../layout/landinglayout/LandingLayout";
 import { makeStyles } from "@material-ui/styles";
-import { Typography, Drawer, List, ListItem } from "@material-ui/core";
+import {
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  Paper,
+  Link,
+} from "@material-ui/core";
 import helptext from "../misc/helptext";
 
 const useStyles = makeStyles((theme) => ({
@@ -9,14 +16,15 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10vh",
     marginLeft: "300px",
     width: "calc((100%-300px) * 0.6)",
+    zIndex: -2,
   },
   drawer: {
     width: "300px",
-    zIndex: -1,
+    zIndex: 0,
   },
   drawerPaper: {
     width: "300px",
-    zIndex: -1,
+    zIndex: 0,
   },
   drawerContainer: {
     overflow: "auto",
@@ -24,25 +32,58 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     fontSize: "1.3rem",
-    margin: '20px 0'
+    margin: "20px 0",
   },
-  section:{
-      margin: '20px'
-  }
+  section: {
+    margin: "20px",
+  },
 }));
 
 const Help = () => {
   const classes = useStyles();
   const helpBody = helptext.map((section) => {
-    if (section.text) {
+    if (section.text || section.image) {
       return (
         <div className={classes.section}>
-          {section.header ? <Typography variant={section.header === 'Introduction' ? 'h2' : 'h3'}>{section.header}</Typography> : null}
+          {section.header ? (
+            <Typography
+              id={section.header.split(" ").join("_")}
+              variant={section.header === "Introduction" ? "h2" : "h3"}
+            >
+              {section.header}
+            </Typography>
+          ) : null}
           <Typography variant="body1" className={classes.text}>
             {section.text}
           </Typography>
-          {section.image ? <img src={section.image} alt={section.image} width={'100%'}/> : null}
+          {section.image ? (
+            <Paper elevation={1}>
+              <img
+                src={section.image}
+                alt={section.image}
+                width={"100%"}
+                style={{ borderRadius: "5px" }}
+              />
+            </Paper>
+          ) : null}
         </div>
+      );
+    }
+  });
+  const helpSidebar = helptext.map((section) => {
+    if (section.header && section.text) {
+      return (
+        <ListItem>
+          <Link href={`#${section.header.split(" ").join("_")}`}>
+            <Typography variant="body1">{section.header}</Typography>
+          </Link>
+        </ListItem>
+      );
+    } else if (section.header) {
+      return (
+        <ListItem>
+          <Typography variant="h5">{section.header}</Typography>
+        </ListItem>
       );
     }
   });
@@ -62,9 +103,7 @@ const Help = () => {
             <ListItem>
               <Typography variant="h4">DB Vis</Typography>
             </ListItem>
-            <ListItem>
-              <Typography variant="body1">DB Vis</Typography>
-            </ListItem>
+            {helpSidebar}
           </List>
         </div>
       </Drawer>

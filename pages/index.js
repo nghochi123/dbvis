@@ -84,7 +84,6 @@ const Index = () => {
                 alt="hero pic"
                 height={600}
                 width={800}
-                className={classes.image}
               />
             </Paper>
           </div>

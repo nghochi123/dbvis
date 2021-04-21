@@ -126,6 +126,16 @@ const MainLayout = (props) => {
     props.refresh();
   };
 
+  const tableDeleteHandler = async (table_id) => {
+    console.log(tables);
+    const newTables = tables.filter(table => table.id !== table_id);
+    setTables(newTables);
+    await axios.post("/api/deletetable", {
+      id: table_id
+    })
+    props.refresh();
+  }
+
   const fieldAdderHandler = async (name, field, db_id, table_id, fieldname) => {
     const concat_dbname = props.dbname.find((item) => item.db_id === db_id)
       .concat_dbname;
@@ -322,6 +332,7 @@ const MainLayout = (props) => {
                   fields={fields}
                   fieldAdder={fieldAdderHandler}
                   fieldDeleter={deleteFieldHandler}
+                  tableDeleter={tableDeleteHandler}
                   db_id={db_id}
                   table_id={id}
                 >

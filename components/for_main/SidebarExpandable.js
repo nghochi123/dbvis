@@ -20,6 +20,7 @@ import {
 import { RerenderStateContext } from "../../context/TableContainerForceRerender";
 import { KeyboardArrowUp, KeyboardArrowDown, Delete } from "@material-ui/icons";
 import { GlobalDispatchContext } from "../../context/GlobalContextProvider";
+import ConfirmDelete from './ConfirmDelete';
 
 const SidebarExpandable = (props) => {
   const rerender = useContext(RerenderStateContext).toggle;
@@ -39,6 +40,8 @@ const SidebarExpandable = (props) => {
   }));
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [response, setResponse] = useState(false);
   const [fieldField, dataField, keyField, connectionField] = [
     useRef(),
     useRef(),
@@ -82,8 +85,16 @@ const SidebarExpandable = (props) => {
   const handleOpen = () => {
     setOpen(!open);
   };
-  const deleteHandler = (field_name) => async (e) => {
+  const fieldDeleteHandler = (field_name) => async (e) => {
     props.fieldDeleter(field_name, props.table_id);
+  };
+  const tableDeleteClickHandler = (e) => {
+    setConfirmDelete(true);
+  };
+  const tableDeleteHandler = (response) => {
+    if(response){
+      props.tableDeleter(props.table_id);
+    }
   }
   return (
     <>
@@ -94,6 +105,9 @@ const SidebarExpandable = (props) => {
         style={{ borderLeft: `7px solid hsl(${props.color}, 50%, 50%)` }}
       >
         <ListItemText primary={props.children} />
+        <IconButton onClick={tableDeleteClickHandler}>
+          <Delete fontSize="small" />
+        </IconButton>
         <ListItemIcon className={classes.root}>
           {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         </ListItemIcon>
@@ -119,8 +133,8 @@ const SidebarExpandable = (props) => {
                   <TableCell align="right">{row.field_type}</TableCell>
                   <TableCell align="right">{row.field_key}</TableCell>
                   <TableCell align="right" style={{ padding: 0 }}>
-                    <IconButton onClick={deleteHandler(row.field_name)}>
-                      <Delete fontSize="5px" />
+                    <IconButton onClick={fieldDeleteHandler(row.field_name)}>
+                      <Delete fontSize="small" />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -164,6 +178,7 @@ const SidebarExpandable = (props) => {
           </div>
         </form>
       </Collapse>
+      <ConfirmDelete openState={confirmDelete} response={tableDeleteHandler} setOpenState={setConfirmDelete}/>
     </>
   );
 };
