@@ -15,9 +15,10 @@ import {
   TextField,
   Select,
   MenuItem,
+  IconButton,
 } from "@material-ui/core";
 import { RerenderStateContext } from "../../context/TableContainerForceRerender";
-import { KeyboardArrowUp, KeyboardArrowDown } from "@material-ui/icons";
+import { KeyboardArrowUp, KeyboardArrowDown, Delete } from "@material-ui/icons";
 import { GlobalDispatchContext } from "../../context/GlobalContextProvider";
 
 const SidebarExpandable = (props) => {
@@ -58,8 +59,7 @@ const SidebarExpandable = (props) => {
           "Please check whether the format of your connection field is correct. The correct format would be [table name]-[field name], where the table name and field name are of the field you wish to connect this field to.",
         ],
       });
-    }
-    else{
+    } else {
       props.fieldAdder(
         props.children,
         {
@@ -82,6 +82,9 @@ const SidebarExpandable = (props) => {
   const handleOpen = () => {
     setOpen(!open);
   };
+  const deleteHandler = (field_name) => async (e) => {
+    props.fieldDeleter(field_name, props.table_id);
+  }
   return (
     <>
       <ListItem
@@ -106,6 +109,7 @@ const SidebarExpandable = (props) => {
                 <TableCell>Field</TableCell>
                 <TableCell align="right">Data Type</TableCell>
                 <TableCell align="right">Connection</TableCell>
+                <TableCell align="right">-</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -114,6 +118,11 @@ const SidebarExpandable = (props) => {
                   <TableCell>{row.field}</TableCell>
                   <TableCell align="right">{row.field_type}</TableCell>
                   <TableCell align="right">{row.field_key}</TableCell>
+                  <TableCell align="right" style={{ padding: 0 }}>
+                    <IconButton onClick={deleteHandler(row.field_name)}>
+                      <Delete fontSize="5px" />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

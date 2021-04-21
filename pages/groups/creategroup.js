@@ -34,20 +34,45 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LogIn = ({ confirmAuth, groups, maxGroupID }) => {
+const CreateGroup = ({ confirmAuth, groups, maxGroupID, usernames }) => {
   const newGroupId = maxGroupID[0].max + 1;
-  console.log(newGroupId);
   const classes = useStyles();
   const router = useRouter();
   const dispatch = useContext(GlobalDispatchContext);
   const state = useContext(GlobalStateContext);
   const authed = checkAuthCG(confirmAuth, state.userid, state.userToken);
-  const [groupnameField, descriptionField] = [useRef(), useRef()];
+  const [groupnameField, descriptionField, usersField] = [
+    useRef(),
+    useRef(),
+    useRef(),
+  ];
   const submitHandler = async (e) => {
     e.preventDefault();
     if (authed) {
       const group_name = groupnameField.current.value;
       const description = descriptionField.current.value;
+      const users = usersField.current.value;
+      let [noProblems, usersArray] = [false, []];
+      if(users !== ""){
+        usersArray = users.split(',')
+        noProblems = usersArray.every(user=>usernames.find(username=>username.username === user));
+        const includedOwnUsername = usersArray.find(user=> usernames.find(username=>username.id === state.userid))
+        if(noProblems && !includedOwnUsername){
+          usersArray = users.split(",").map((user) => {
+            return {
+              userid: usernames.find(username=>username.username === user).id,
+              groupid: newGroupId,
+            };
+          });
+        }
+        else {
+          dispatch({
+            type: 'TOGGLE_DIALOG',
+            payload: ['Username not found','One or more of the usernames typed in are not in our database. Please check that all usernames are keyed in properly, there are no trailing spaces or commas, and your own username is not included inside. Usernames are case-sensitive.']
+          });
+          return;
+        }
+      }
       const existingGroup = groups.find(
         (group) => group.group_name.toLowerCase() === group_name.toLowerCase()
       );
@@ -76,6 +101,12 @@ const LogIn = ({ confirmAuth, groups, maxGroupID }) => {
         })
         .then((res) => console.log(res))
         .catch((e) => console.log(e));
+      if (usersArray.length !== 0) {
+        await axios
+          .post("/api/addusertogroup", usersArray)
+          .then((res) => console.log(res))
+          .catch((e) => console.log(e));
+      }
       router.push("/groups");
     }
   };
@@ -131,10 +162,19 @@ const LogIn = ({ confirmAuth, groups, maxGroupID }) => {
               fullWidth
               multiline
               label="Description"
-              type="description"
               id="description"
               rows={5}
               inputRef={descriptionField}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              multiline
+              label="Users"
+              id="users"
+              helperText="Add a user to the group with their username. Add multiple users by splitting their usernames with a comma (,). Usernames are case sensitive. You can choose not to add any users now."
+              inputRef={usersField}
             />
             <Button
               className={classes.pushUp}
@@ -159,7 +199,7 @@ const LogIn = ({ confirmAuth, groups, maxGroupID }) => {
   );
 };
 
-export default LogIn;
+export default CreateGroup;
 
 export const getServerSideProps = async ({ req, query }) => {
   const confirmAuth = await diagrams("user_tokens")
@@ -167,11 +207,13 @@ export const getServerSideProps = async ({ req, query }) => {
     .select();
   const groups = await diagrams("grp").select();
   const maxGroupID = await diagrams("grp").max("id", { as: "max" });
+  const users = await diagrams("users").select();
   return {
     props: {
       confirmAuth: JSON.parse(JSON.stringify(confirmAuth)),
       groups: JSON.parse(JSON.stringify(groups)),
       maxGroupID: JSON.parse(JSON.stringify(maxGroupID)),
+      usernames: JSON.parse(JSON.stringify(users)),
     },
   };
 };

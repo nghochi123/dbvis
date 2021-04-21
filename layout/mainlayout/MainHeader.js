@@ -61,7 +61,7 @@ const MainHeader = (props) => {
           color="inherit"
           aria-label="home"
           className={classes.homeButton}
-          onClick={handleClick("/groups")}
+          onClick={handleClick("/")}
         >
           <Home />
         </IconButton>

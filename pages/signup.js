@@ -189,7 +189,12 @@ const SignUp = ({ users }) => {
           >
             Sign Up
           </Button>
-          <Grid className={classes.pushUp} container justify="flex-end">
+          <Grid className={classes.pushUp} container justify="space-between">
+          <Grid item>
+              <Link href="/" variant="body2">
+                Home
+              </Link>
+            </Grid>
             <Grid item>
               <Link href="/login" variant="body2">
                 Already have an account? Sign in

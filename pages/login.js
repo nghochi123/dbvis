@@ -62,7 +62,9 @@ const LogIn = ({ users }) => {
       const payload = {
         user_id: user.id,
         token,
-        expiry_date: new Date(new Date().getTime() + (2 * 24 + 8) * 60 * 60 * 1000)
+        expiry_date: new Date(
+          new Date().getTime() + (2 * 24 + 8) * 60 * 60 * 1000
+        )
           .toISOString()
           .slice(0, 19)
           .replace("T", " "),
@@ -70,14 +72,14 @@ const LogIn = ({ users }) => {
       await axios
         .post("/api/addtoken", payload)
         .then((res) => {
-            dispatch({
-                type: 'SET_USER_TOKEN',
-                payload: res.data.token
-            });
-            dispatch({
-                type: 'SET_USERID',
-                payload: user.id
-            })
+          dispatch({
+            type: "SET_USER_TOKEN",
+            payload: res.data.token,
+          });
+          dispatch({
+            type: "SET_USERID",
+            payload: user.id,
+          });
         })
         .catch((e) => console.log(e));
       router.push("/groups");
@@ -126,8 +128,8 @@ const LogIn = ({ users }) => {
           </Button>
           <Grid className={classes.pushUp} container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                Reset Password
+              <Link href="/" variant="body2">
+                Home
               </Link>
             </Grid>
             <Grid item>

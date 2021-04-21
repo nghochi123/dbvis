@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme) => ({
     padding: "0 5px 5px 5px",
     textAlign: "center",
   },
+  field: {
+    margin: 0,
+    padding: '8px 16px'
+  }
 }));
 
 const TableBox = ({ id, name, fields, color }) => {
@@ -39,8 +43,8 @@ const TableBox = ({ id, name, fields, color }) => {
         <TableBody>
           {tableFields.map((field) => (
             <TableRow id={field.field_name} key={field.field_name}>
-              <TableCell>{field.field}</TableCell>
-              <TableCell align="right">{field.field_type}</TableCell>
+              <TableCell className={classes.field}>{field.field}</TableCell>
+              <TableCell className={classes.field} align="right">{field.field_type}</TableCell>
             </TableRow>
           ))}
         </TableBody>

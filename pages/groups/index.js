@@ -21,10 +21,10 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   outerContainer: {
+    marginTop: '10vh',
     height: "90vh",
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
   },
   list: {
     width: "40vw",
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "1.5em",
   },
   fab: {
-    position: 'absolute',
+    position: 'fixed',
     bottom: '3vw',
     right: '3vh',
   }

@@ -16,7 +16,10 @@ import { RerenderDispatchContext } from "../../context/TableContainerForceRerend
 
 import SidebarExpandable from "../../components/for_main/SidebarExpandable";
 import MainHeader from "./MainHeader";
-import { GlobalDispatchContext, GlobalStateContext } from "../../context/GlobalContextProvider";
+import {
+  GlobalDispatchContext,
+  GlobalStateContext,
+} from "../../context/GlobalContextProvider";
 
 const drawerWidth = 400;
 
@@ -57,8 +60,12 @@ const MainLayout = (props) => {
   const rerender = useContext(RerenderDispatchContext);
   const dispatch = useContext(GlobalDispatchContext);
   const state = useContext(GlobalStateContext);
-  const dbinfo = props.breadcrumbinfo.find(db=>state.dbid === db.id);
-  const [username, groupname, dbname] = [dbinfo.username, dbinfo.group_name, dbinfo.db_name];
+  const dbinfo = props.breadcrumbinfo.find((db) => state.dbid === db.id);
+  const [username, groupname, dbname] = [
+    dbinfo.username,
+    dbinfo.group_name,
+    dbinfo.db_name,
+  ];
   const classes = useStyles();
   const table = props.tables.map((table) => {
     return {
@@ -82,7 +89,7 @@ const MainLayout = (props) => {
       name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
-      order: props.maxtableid + 1,
+      order: props.maxtableid[0].maxid + 1,
       top: 500,
       left: 500,
       db_id: props.dbid,
@@ -90,21 +97,34 @@ const MainLayout = (props) => {
     const newTables = [...tables, tbl];
     setTables(newTables);
     tableNameField.current.value = "";
-    await axios
-      .post("/api/addtable", {
-        id: props.maxtableid[0].maxid + 1,
-        tbl_name: tbl.name,
-        color: tbl.color,
-        _top: tbl.top,
-        _left: tbl.left,
-        db_id: props.dbid,
-      })
-      .then((res) => console.log(res))
-      .catch((e) => console.log(e));
+    if (props.dbid !== -1) {
+      await axios
+        .post("/api/addtable", {
+          id: props.maxtableid[0].maxid + 1,
+          tbl_name: tbl.name,
+          color: tbl.color,
+          _top: tbl.top,
+          _left: tbl.left,
+          db_id: props.dbid,
+        })
+        .then((res) => console.log(res))
+        .catch((e) => console.log(e));
+    } else {
+      props.settables([
+        ...props.tables,
+        {
+          id: props.maxtableid[0].maxid + 1,
+          tbl_name: tbl.name,
+          color: tbl.color,
+          _top: tbl.top,
+          _left: tbl.left,
+          db_id: props.dbid,
+        },
+      ]);
+    }
     rerender({ type: "FORCE_RERENDER" });
     props.refresh();
   };
-
 
   const fieldAdderHandler = async (name, field, db_id, table_id, fieldname) => {
     const concat_dbname = props.dbname.find((item) => item.db_id === db_id)
@@ -126,12 +146,6 @@ const MainLayout = (props) => {
     } else {
       //Force rerender in table container
       if (field.field_key.startsWith("F")) {
-        console.log(
-          props.fields,
-          connection,
-          connectionField,
-          props.fields.find((field) => field.field_name === connectionField)
-        );
         if (
           !props.fields.find((field) => field.field_name === connectionField)
         ) {
@@ -150,38 +164,105 @@ const MainLayout = (props) => {
             (a, b) => a.order - b.order
           );
           setTables(finalTable);
-          await axios
-            .post("/api/addfield", { ...field, field_name: newname, table_id })
-            .then((res) => console.log(res))
-            .catch((e) => console.log(e));
-          await axios
-            .post("/api/addconnection", {
-              arrow_from: newname,
-              arrow_to: connectionField,
-            })
-            .then((res) => console.log(res))
-            .catch((e) => console.log(e));
+          if (props.dbid !== -1) {
+            await axios
+              .post("/api/addfield", {
+                ...field,
+                field_name: newname,
+                table_id,
+              })
+              .then((res) => console.log(res))
+              .catch((e) => console.log(e));
+            await axios
+              .post("/api/addconnection", {
+                arrow_from: newname,
+                arrow_to: connectionField,
+              })
+              .then((res) => console.log(res))
+              .catch((e) => console.log(e));
+          } else {
+            props.setfields([
+              ...props.fields,
+              {
+                ...field,
+                field_name: newname,
+                table_id,
+                tbl_name: tableToChange.tbl_name,
+                color: tableToChange.color,
+                _top: tableToChange._top,
+                _left: tableToChange._left,
+                db_id: -1,
+              },
+            ]);
+            props.setarrows([
+              ...props.arrows,
+              {
+                arrow_from: newname,
+                arrow_to: connectionField,
+                field_name: newname,
+                ...field,
+                table_id,
+                tbl_name: tableToChange.tbl_name,
+                color: tableToChange.color,
+                _top: tableToChange._top,
+                _left: tableToChange._left,
+                db_id: -1,
+              },
+            ]);
+          }
           rerender({ type: "FORCE_RERENDER" });
           props.refresh();
         }
       } else {
         let tableToChange = tables.filter((table) => table.name === name)[0];
         const tableArray = tables.filter((table) => table.name !== name);
-        tableToChange.fields.push(field); //field is an object with field, type, key
+        tableToChange.fields.push({ ...field, field_name: newname, table_id }); //field is an object with field, type, key
         const finalTable = [...tableArray, tableToChange].sort(
           (a, b) => a.order - b.order
         );
         setTables(finalTable);
-        await axios
-          .post("/api/addfield", { ...field, field_name: newname, table_id })
-          .then((res) => console.log(res))
-          .catch((e) => console.log(e));
+        if (props.dbid !== -1) {
+          await axios
+            .post("/api/addfield", { ...field, field_name: newname, table_id })
+            .then((res) => console.log(res))
+            .catch((e) => console.log(e));
+        } else {
+          props.setfields([
+            ...props.fields,
+            {
+              ...field,
+              field_name: newname,
+              table_id,
+              tbl_name: tableToChange.tbl_name,
+              color: tableToChange.color,
+              _top: tableToChange._top,
+              _left: tableToChange._left,
+              db_id: -1,
+            },
+          ]);
+        }
         rerender({ type: "FORCE_RERENDER" });
         props.refresh();
       }
     }
   };
-
+  const deleteFieldHandler = async (field_name, table_id) => {
+    const tableToChange = tables.find((table) => table.id === table_id);
+    const remainingTables = tables.filter((table) => table.id !== table_id);
+    const removedField = tableToChange.fields.filter(
+      (field) => field.field_name !== field_name
+    );
+    tableToChange.fields = removedField;
+    const finalTable = [...remainingTables, tableToChange].sort(
+      (a, b) => a.order - b.order
+    );
+    setTables(finalTable);
+    await axios.post("/api/deletefield", {
+      field_name,
+    }).then(res=>console.log(res))
+    .catch(e=>console.log(e));
+    props.refresh();
+  };
   const tableNameField = useRef();
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -193,11 +274,12 @@ const MainLayout = (props) => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <MainHeader 
-      headerClass={classes.appBar}
-      username={username}
-      groupname={groupname}
-      dbname={dbname} />
+      <MainHeader
+        headerClass={classes.appBar}
+        username={username}
+        groupname={groupname}
+        dbname={dbname}
+      />
       <div>
         <Toolbar />
         <IconButton onClick={handleDrawerOpen} style={{ zIndex: 69 }}>
@@ -239,6 +321,7 @@ const MainLayout = (props) => {
                   color={color}
                   fields={fields}
                   fieldAdder={fieldAdderHandler}
+                  fieldDeleter={deleteFieldHandler}
                   db_id={db_id}
                   table_id={id}
                 >
