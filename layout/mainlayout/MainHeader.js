@@ -98,11 +98,12 @@ const MainHeader = (props) => {
             <Settings />
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
+            {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My account</MenuItem>
             <MenuItem onClick={handleClose}>Log Out</MenuItem>
             <hr />
-            <MenuItem onClick={handleClose}>Advanced Settings</MenuItem>
+            <MenuItem onClick={handleClose}>Advanced Settings</MenuItem> */}
+            <MenuItem onClick={handleClose}>To be added</MenuItem>
           </Menu>
         </div>
       </Toolbar>
