@@ -17,6 +17,7 @@ module.exports = withPlugins(
       config.plugins.push(
         new webpack.IgnorePlugin(/mariasql/, /\/knex\//),
         new webpack.IgnorePlugin(/mssql/, /\/knex\//),
+        new webpack.IgnorePlugin(/redshift/, /\/knex\//),
         new webpack.IgnorePlugin(/postgres/, /\/knex\//),
         new webpack.IgnorePlugin(/oracle/, /\/knex\//),
         new webpack.IgnorePlugin(/oracledb/, /\/knex\//),
