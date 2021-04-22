@@ -1,5 +1,12 @@
-module.exports = {
+const withPlugins = require('next-compose-plugins');
+const optimizedImages = require('next-optimized-images');
 
+module.exports = withPlugins([
+    [optimizedImages, {
+        /* config for next-optimized-images */
+      }],
+], {
+    distDir: 'out',
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
         new webpack.IgnorePlugin(/mariasql/, /\/knex\//),
         new webpack.IgnorePlugin(/mssql/, /\/knex\//),
@@ -11,4 +18,4 @@ module.exports = {
         new webpack.IgnorePlugin(/strong-oracle/, /\/knex\//)
       return config
     },
-  };
+    })
