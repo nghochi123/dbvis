@@ -6,7 +6,6 @@ module.exports = withPlugins([
         /* config for next-optimized-images */
       }],
 ], {
-    target: 'serverless',
     distDir: 'out',
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
         new webpack.IgnorePlugin(/mariasql/, /\/knex\//),
