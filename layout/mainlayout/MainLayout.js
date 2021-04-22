@@ -130,9 +130,14 @@ const MainLayout = (props) => {
     console.log(tables);
     const newTables = tables.filter(table => table.id !== table_id);
     setTables(newTables);
-    await axios.post("/api/deletetable", {
-      id: table_id
-    })
+    if (props.dbid !== -1) {
+      await axios.post("/api/deletetable", {
+        id: table_id
+      })
+    }
+    else{
+      props.settables(newTables);
+    }
     props.refresh();
   }
 
@@ -267,10 +272,15 @@ const MainLayout = (props) => {
       (a, b) => a.order - b.order
     );
     setTables(finalTable);
-    await axios.post("/api/deletefield", {
-      field_name,
-    }).then(res=>console.log(res))
-    .catch(e=>console.log(e));
+    if (props.dbid !== -1) {
+      await axios.post("/api/deletefield", {
+        field_name,
+      }).then(res=>console.log(res))
+      .catch(e=>console.log(e));
+    }
+    else {
+      props.settables(finalTable);
+    }
     props.refresh();
   };
   const tableNameField = useRef();
