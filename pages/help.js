@@ -16,8 +16,7 @@ const useStyles = makeStyles((theme) => ({
   body: {
     marginTop: "10vh",
     marginLeft: "300px",
-    width: "calc((100%-300px) * 0.6)",
-    zIndex: -2,
+    width: "calc((100% - 300px) * 0.6)",
   },
   drawer: {
     width: "300px",

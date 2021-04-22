@@ -53,7 +53,7 @@ const Index = () => {
     router.push(link);
   };
   return (
-    <>
+    <div style={{  overflow: 'hidden'}}>
     <Head>
       <title>DB Vis</title>
     </Head>
@@ -95,7 +95,7 @@ const Index = () => {
       </div>
         <LandingFooter className={classes.footer}/>
     </div>
-    </>
+    </div>
   );
 };
 
