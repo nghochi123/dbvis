@@ -1,5 +1,6 @@
 import React from "react";
 import LandingLayout from "../layout/landinglayout/LandingLayout";
+import Head from "next/head";
 import { makeStyles } from "@material-ui/styles";
 import {
   Typography,
@@ -89,6 +90,9 @@ const Help = () => {
   });
   return (
     <LandingLayout>
+      <Head>
+        <title>Help</title>
+      </Head>
       <div className={classes.body}>{helpBody}</div>
       <Drawer
         className={classes.drawer}

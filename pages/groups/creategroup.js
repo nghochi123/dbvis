@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import {
   Button,
   CssBaseline,
@@ -53,22 +54,29 @@ const CreateGroup = ({ confirmAuth, groups, maxGroupID, usernames }) => {
       const description = descriptionField.current.value;
       const users = usersField.current.value;
       let [noProblems, usersArray] = [false, []];
-      if(users !== ""){
-        usersArray = users.split(',')
-        noProblems = usersArray.every(user=>usernames.find(username=>username.username === user));
-        const includedOwnUsername = usersArray.find(user=> usernames.find(username=>username.id === state.userid))
-        if(noProblems && !includedOwnUsername){
+      if (users !== "") {
+        usersArray = users.split(",");
+        noProblems = usersArray.every((user) =>
+          usernames.find((username) => username.username === user)
+        );
+        const includedOwnUsername = usersArray.find((user) =>
+          usernames.find((username) => username.id === state.userid)
+        );
+        if (noProblems && !includedOwnUsername) {
           usersArray = users.split(",").map((user) => {
             return {
-              userid: usernames.find(username=>username.username === user).id,
+              userid: usernames.find((username) => username.username === user)
+                .id,
               groupid: newGroupId,
             };
           });
-        }
-        else {
+        } else {
           dispatch({
-            type: 'TOGGLE_DIALOG',
-            payload: ['Username not found','One or more of the usernames typed in are not in our database. Please check that all usernames are keyed in properly, there are no trailing spaces or commas, and your own username is not included inside. Usernames are case-sensitive.']
+            type: "TOGGLE_DIALOG",
+            payload: [
+              "Username not found",
+              "One or more of the usernames typed in are not in our database. Please check that all usernames are keyed in properly, there are no trailing spaces or commas, and your own username is not included inside. Usernames are case-sensitive.",
+            ],
           });
           return;
         }
@@ -193,6 +201,9 @@ const CreateGroup = ({ confirmAuth, groups, maxGroupID, usernames }) => {
   }
   return (
     <>
+      <Head>
+        <title>Create Group</title>
+      </Head>
       {display}
       <ErrorDialog />
     </>

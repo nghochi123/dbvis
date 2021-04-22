@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useEffect } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import {
   Button,
@@ -147,6 +148,7 @@ const LogIn = ({ confirmAuth, dbs, maxdbid }) => {
   }
   return (
     <>
+      <Head><title>New Database</title></Head>
       {display}
       <ErrorDialog />
     </>

@@ -1,5 +1,4 @@
 import React from "react"
-import {Container} from '@material-ui/core';
 
 import LandingHeader from './LandingHeader';
 import LandingFooter from './LandingFooter';

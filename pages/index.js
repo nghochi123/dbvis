@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import Image from "next/image";
 import { Typography, Link, Paper, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
@@ -53,6 +54,9 @@ const Index = () => {
   };
   return (
     <>
+    <Head>
+      <title>DB Vis</title>
+    </Head>
     <div className={classes.background}>
 
       <LandingHeader />

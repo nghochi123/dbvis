@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import {
   Button,
   CssBaseline,
@@ -124,6 +125,9 @@ const SignUp = ({ users }) => {
       component="main"
       maxWidth="xs"
     >
+      <Head>
+        <title>Sign Up</title>
+      </Head>
       <CssBaseline />
       <div className={classes.innerContainer}>
         <Typography component="h1" variant="h5">

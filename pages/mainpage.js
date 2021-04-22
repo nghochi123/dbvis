@@ -46,7 +46,7 @@ const MainPage = ({ tables, fields, arrows, names, maxtableid, breadcrumbinfo, c
     display = (
       <div>
       <Head>
-        <title>Roflmao</title>
+        <title>Diagrams</title>
       </Head>
       <TableContainerForceRerender>
         <MainLayout

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/styles";
 import { List, ListItem, ListItemText, Fab, Typography } from "@material-ui/core";
@@ -115,7 +116,9 @@ const Groups = ({ groups, confirmAuth }) => {
   }
   return (
     <div>
-
+      <Head>
+        <title>Groups</title>
+      </Head>
     <div className={classes.outerContainer}>
       <OtherHeader />
       <div className={classes.innerContainer}>

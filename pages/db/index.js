@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/styles";
 import { List, ListItem, ListItemText, Fab } from "@material-ui/core";
@@ -110,6 +111,7 @@ const Groups = ({ dbs, confirmAuth }) => {
   }
   return (
     <div>
+      <Head><title>Databases</title></Head>
       <div className={classes.outerContainer}>
         <OtherHeader />
         <div className={classes.innerContainer}>
