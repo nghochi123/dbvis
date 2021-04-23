@@ -4,7 +4,7 @@ A Database Diagram Builder built using React and Next.js, bootstrapped with `cre
 
 A clone of [DrawSQL](https://drawsql.app/) although the only thing I actually know about it is the image on the landing page. Haven't actually used it myself to be honest.
 
-App deployed with [Vercel](https://vercel.com/).
+App deployed with [Vercel](https://vercel.com/). 
 
 ![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=dbvis)
 
@@ -45,6 +45,10 @@ WIP:
 * Allowing the deletion of users
 * Alternative view of diagram schemas (in JSON format maybe?)
 * More customisability to the user
+
+Also, need to get around removing some of the excess packages.
+
+Initially intended to deploy with Netlify but Netlify was giving me quite a bit of trouble. Didn't realize Vercel was a deployment platform as well, and since they were the ones who made Next.JS, I decided to go ahead and try using them. 
 
 ## Tech/Frameworks used
 
