@@ -1,6 +1,6 @@
 export const tables = [
   {
-    id: 1,
+    id: -1,
     tbl_name: 'Sample Table',
     color: 5,
     _top: 500,
@@ -15,8 +15,8 @@ export const fields = [
     field: 'Sample Field',
     field_type: 'int',
     field_key: '-',
-    table_id: 1,
-    id: 1,
+    table_id: -1,
+    id: -1,
     tbl_name: 'Sample Table',
     color: 5,
     _top: 500,
@@ -28,7 +28,7 @@ export const fields = [
 export const dbname = [
   {
     db_id: -1,
-    table_id: 1,
+    table_id: -1,
     concat_dbname: "guest-guest_group-guest_database",
     table_name: 'Sample Table'
   }
