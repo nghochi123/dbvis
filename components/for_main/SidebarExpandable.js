@@ -41,7 +41,6 @@ const SidebarExpandable = (props) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [response, setResponse] = useState(false);
   const [fieldField, dataField, keyField, connectionField] = [
     useRef(),
     useRef(),

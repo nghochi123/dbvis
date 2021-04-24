@@ -71,27 +71,30 @@ const MainLayout = (props) => {
     return {
       id: table.id,
       name: table.tbl_name,
+      tbl_name: table.tbl_name,
       color: table.color,
       fields: props.fields.filter((field) => field.table_id === table.id),
       order: table.id,
-      top: table._top,
-      left: table._left,
+      _top: table._top,
+      _left: table._left,
       db_id: table.db_id,
     };
   });
   const [open, setOpen] = useState(false);
   const [tables, setTables] = useState(table);
+  console.log(tables, props.tables, props.fields, props.arrows)
 
   const tableAdderHandler = async (event) => {
     event.preventDefault();
     const tbl = {
       id: props.maxtableid[0].maxid + 1,
       name: tableNameField.current.value,
+      tbl_name: tableNameField.current.value,
       color: Math.random() * 100,
       fields: [],
       order: props.maxtableid[0].maxid + 1,
-      top: 500,
-      left: 500,
+      _top: 500,
+      _left: 500,
       db_id: props.dbid,
     };
     const newTables = [...tables, tbl];
@@ -103,12 +106,10 @@ const MainLayout = (props) => {
           id: props.maxtableid[0].maxid + 1,
           tbl_name: tbl.name,
           color: tbl.color,
-          _top: tbl.top,
-          _left: tbl.left,
+          _top: tbl._top,
+          _left: tbl._left,
           db_id: props.dbid,
         })
-        .then((res) => console.log(res))
-        .catch((e) => console.log(e));
     } else {
       props.settables([
         ...props.tables,
@@ -116,8 +117,8 @@ const MainLayout = (props) => {
           id: props.maxtableid[0].maxid + 1,
           tbl_name: tbl.name,
           color: tbl.color,
-          _top: tbl.top,
-          _left: tbl.left,
+          _top: tbl._top,
+          _left: tbl._left,
           db_id: props.dbid,
         },
       ]);
@@ -127,7 +128,7 @@ const MainLayout = (props) => {
   };
 
   const tableDeleteHandler = async (table_id) => {
-    console.log(tables);
+    
     const newTables = tables.filter(table => table.id !== table_id);
     setTables(newTables);
     if (props.dbid !== -1) {
@@ -136,8 +137,11 @@ const MainLayout = (props) => {
       })
     }
     else{
+      const tableToDelete = tables.find(table=>table.id===table.id)
       props.settables(newTables);
+      props.setarrows(props.arrows.filter(arrow=> !arrow.arrow_from.includes(tableToDelete.tbl_name) && !arrow.arrow_to.includes(tableToDelete.tbl_name)))
     }
+    rerender({ type: "FORCE_RERENDER" });
     props.refresh();
   }
 
@@ -174,7 +178,7 @@ const MainLayout = (props) => {
         } else {
           let tableToChange = tables.filter((table) => table.name === name)[0];
           const tableArray = tables.filter((table) => table.name !== name);
-          tableToChange.fields.push(field); //field is an object with field, type, key
+          tableToChange.fields.push({...field, field_name: newname, table_id}); //field is an object with field, type, key
           const finalTable = [...tableArray, tableToChange].sort(
             (a, b) => a.order - b.order
           );
@@ -186,15 +190,11 @@ const MainLayout = (props) => {
                 field_name: newname,
                 table_id,
               })
-              .then((res) => console.log(res))
-              .catch((e) => console.log(e));
             await axios
               .post("/api/addconnection", {
                 arrow_from: newname,
                 arrow_to: connectionField,
               })
-              .then((res) => console.log(res))
-              .catch((e) => console.log(e));
           } else {
             props.setfields([
               ...props.fields,
@@ -239,8 +239,6 @@ const MainLayout = (props) => {
         if (props.dbid !== -1) {
           await axios
             .post("/api/addfield", { ...field, field_name: newname, table_id })
-            .then((res) => console.log(res))
-            .catch((e) => console.log(e));
         } else {
           props.setfields([
             ...props.fields,
@@ -275,12 +273,14 @@ const MainLayout = (props) => {
     if (props.dbid !== -1) {
       await axios.post("/api/deletefield", {
         field_name,
-      }).then(res=>console.log(res))
-      .catch(e=>console.log(e));
+      })
     }
     else {
       props.settables(finalTable);
+      props.setfields(props.fields.filter(field => field.field_name !== field_name))
+      props.setarrows(props.arrows.filter(arrow => arrow.arrow_from !== field_name && arrow.arrow_to !== field_name))
     }
+    rerender({ type: "FORCE_RERENDER" });
     props.refresh();
   };
   const tableNameField = useRef();
