@@ -50,6 +50,12 @@ Also, need to get around removing some of the excess packages.
 
 Initially intended to deploy with Netlify but Netlify was giving me quite a bit of trouble. Didn't realize Vercel was a deployment platform as well, and since they were the ones who made Next.JS, I decided to go ahead and try using them. 
 
+### Known bugs/unintended features (to be fixed)
+
+* Able to create more than one table with the same name.
+* Arrows sometimes extend inwards when past a certain threshold (for example an arrow from a field pointing to a table right below it)
+* Arrows are able to point to another field in the same table
+
 ## Tech/Frameworks used
 
 * [React](https://reactjs.org/)
