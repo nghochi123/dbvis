@@ -74,7 +74,7 @@ const TableContainer = ({ tables, fields, arrows }) => {
         );
       })}
       {lines.map((line) => {
-        return <Xarrow {...line} />;
+        return <Xarrow key={`${line.start}-${line.end}`} {...line} />;
       })}
     </div>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/styles";
 
 import LandingHeader from "../layout/landinglayout/LandingHeader";
 import LandingFooter from '../layout/landinglayout/LandingFooter';
+import { GlobalDispatchContext } from "../context/GlobalContextProvider";
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -52,6 +53,8 @@ const Index = () => {
     event.preventDefault();
     router.push(link);
   };
+  const dispatch = useContext(GlobalDispatchContext);
+  dispatch({ type: "SET_DBID", payload: -1 });
   return (
     <div style={{  overflow: 'hidden'}}>
     <Head>
