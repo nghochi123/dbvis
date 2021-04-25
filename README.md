@@ -4,7 +4,9 @@ A Database Diagram Builder built using React and Next.js, bootstrapped with `cre
 
 A clone of [DrawSQL](https://drawsql.app/) although the only thing I actually know about it is the image on the landing page. Haven't actually used it myself to be honest.
 
-App deployed with [Vercel](https://vercel.com/). 
+App deployed with [Vercel](https://vercel.com/).
+
+*Note: The app is not meant to be used on mobile. I decided that it would be too difficult to make the webpage work on mobile (managing the drag and drop features mainly) that it would not be worth it to try making media queries for mobile. Sorry!*
 
 ![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=dbvis)
 
@@ -48,7 +50,7 @@ WIP:
 
 Also, need to get around removing some of the excess packages.
 
-Initially intended to deploy with Netlify but Netlify was giving me quite a bit of trouble. Didn't realize Vercel was a deployment platform as well, and since they were the ones who made Next.JS, I decided to go ahead and try using them. 
+Initially intended to deploy with Netlify but Netlify was giving me quite a bit of trouble. Didn't realize Vercel was a deployment platform as well, and since they were the ones who made Next.JS, I decided to go ahead and try using them.
 
 ## Tech/Frameworks used
 
@@ -66,6 +68,7 @@ I would consider it generally complete - although there are quite a few function
 [![forthebadge](https://forthebadge.com/images/badges/60-percent-of-the-time-works-every-time.svg)](https://forthebadge.com)
 
 ## Other Credits
+
 * [FreeDB](https://freedb.tech/)
 * [Knex](http://knexjs.org/)
 * [React-draggable](https://www.npmjs.com/package/react-draggable)
