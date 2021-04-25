@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 const LandingFooter = (props) => {
   const classes = useStyles();
   const router = useRouter();
+  console.log(router.pathname);
   const clickHandler=(route)=>(e)=>{
     e.preventDefault();
     router.push(route);
@@ -32,7 +33,7 @@ const LandingFooter = (props) => {
             <Link onClick={clickHandler('/')} href="/" color="inherit">
               <GridOn />
             </Link>
-            <p style={{ marginLeft: "10px" }}>
+            <p style={router.pathname === '/help' ? {marginLeft: "150px"} : {marginLeft: "10px"} }>
               DB Vis | 2021 | Made for educational purposes
             </p>
           </div>
