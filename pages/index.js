@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import { Typography, Link, Paper, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 import LandingHeader from "../layout/landinglayout/LandingHeader";
-import LandingFooter from '../layout/landinglayout/LandingFooter';
+import LandingFooter from "../layout/landinglayout/LandingFooter";
 import { GlobalDispatchContext } from "../context/GlobalContextProvider";
 
 const useStyles = makeStyles((theme) => ({
@@ -30,20 +30,19 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "1200px",
   },
   pushUp: {
-    marginTop: '15px',
+    marginTop: "15px",
   },
   header: {
-    textAlign: 'center'
+    textAlign: "center",
   },
   body: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxWidth: '1200px',
-    textAlign: 'center'
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    maxWidth: "1200px",
+    textAlign: "center",
   },
-
 }));
 
 const Index = () => {
@@ -56,48 +55,56 @@ const Index = () => {
   const dispatch = useContext(GlobalDispatchContext);
   dispatch({ type: "SET_DBID", payload: -1 });
   return (
-    <div style={{  overflow: 'hidden'}}>
-    <Head>
-      <title>DB Vis</title>
-    </Head>
-    <div className={classes.background}>
-
-      <LandingHeader />
-      <div className={classes.hero}>
-        <div className={classes.innerHero}>
-          <div style={{ width: "50%" }}>
-            <Typography variant="h2" component="h2">
-              DB Vis
-            </Typography>
-            <Typography className={classes.pushUp} variant="h5" component="h5">
-              Visualise and share your database with others.
-            </Typography>
-            <Typography className={classes.pushUp} variant="subtitle2" component="p">
-              A clone of the popular database visualisation app{" "}
-              <Link color="inherit" href="https://drawsql.app">
-                DrawSQL
-              </Link>
-              .
-            </Typography>
-            <Button onClick={handleClick('/signup')} className={classes.pushUp} variant="contained" color="default">
-              Get Started
-            </Button>
-          </div>
-          <div style={{ width: "50%", textAlign: "right" }}>
-            <Paper elevation={10}>
-
-              <Image
-                src="/HeroPic.png"
-                alt="hero pic"
-                height={600}
-                width={800}
-              />
-            </Paper>
+    <div style={{ overflow: "hidden" }}>
+      <Head>
+        <title>DB Vis</title>
+      </Head>
+      <div className={classes.background}>
+        <LandingHeader />
+        <div className={classes.hero}>
+          <div className={classes.innerHero}>
+            <div style={{ width: "50%" }}>
+              <Typography variant="h2" component="h2">
+                DB Vis
+              </Typography>
+              <Typography
+                className={classes.pushUp}
+                variant="h5"
+                component="h5"
+              >
+                Visualise and share your database with others.
+              </Typography>
+              <Typography
+                className={classes.pushUp}
+                variant="subtitle2"
+                component="p"
+              >
+                Our drag-and-drop tables lets you visualise and neatly present
+                your database schemas.
+              </Typography>
+              <Button
+                onClick={handleClick("/signup")}
+                className={classes.pushUp}
+                variant="contained"
+                color="default"
+              >
+                Get Started
+              </Button>
+            </div>
+            <div style={{ width: "50%", textAlign: "right" }}>
+              <Paper elevation={10}>
+                <Image
+                  src="/HeroPic.png"
+                  alt="hero pic"
+                  height={600}
+                  width={800}
+                />
+              </Paper>
+            </div>
           </div>
         </div>
+        <LandingFooter className={classes.footer} />
       </div>
-        <LandingFooter className={classes.footer}/>
-    </div>
     </div>
   );
 };
